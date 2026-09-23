@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kittehpult — …and other tails</title>
+<meta name="description" content="Fling cats, stack cats, get to space! A physics toy for iPhone and Android.">
+<link rel="icon" href="img/icon.svg" type="image/svg+xml">
+<meta property="og:title" content="Kittehpult — …and other tails">
+<meta property="og:description" content="Fling cats, stack cats, get to space!">
+<meta property="og:image" content="https://kittehpult.app/img/ios_03_stack.png">
+<meta property="og:url" content="https://kittehpult.app/">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:#FDF3E3; --ink:#5B4636; --ink-soft:rgba(91,70,54,.7);
+    --orange:#F0A05A; --pink:#E8909A; --green:#7BC47F; --blue:#6AA9E8;
+    --card:#fff; --line:rgba(91,70,54,.18);
+    --shadow:0 6px 0 rgba(91,70,54,.15);
+    --gap:16px; --per:4;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --cream:#231C17; --ink:#F6EDE0; --ink-soft:rgba(246,237,224,.72);
+      --card:#2E2620; --line:rgba(246,237,224,.16);
+      --shadow:0 6px 0 rgba(0,0,0,.35);
+    }
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; background:var(--cream); color:var(--ink);
+    font-family:'Comic Neue', 'Comic Sans MS', system-ui, sans-serif;
+    font-size:17px; line-height:1.55; overflow-x:hidden;
+  }
+  .wrap{max-width:1040px; margin:0 auto; padding:0 20px}
+  header{text-align:center; padding:clamp(32px,7vw,56px) 0 8px}
+  h1{
+    font-weight:700; font-size:clamp(42px,10vw,86px); margin:0; letter-spacing:-.01em;
+    -webkit-text-stroke:2px var(--ink);
+  }
+  .tagline{font-size:clamp(17px,4vw,22px); color:var(--ink-soft); margin:2px 0 0}
+  .lede{max-width:560px; margin:22px auto 0; font-size:clamp(16px,4vw,19px)}
+  .cta{display:flex; gap:14px; justify-content:center; flex-wrap:wrap; margin:28px 0 8px}
+  .btn{
+    display:inline-flex; align-items:center; gap:10px; text-decoration:none; color:#fff;
+    font-weight:700; padding:13px 26px; border-radius:16px; border:2px solid var(--ink);
+    box-shadow:var(--shadow); font-size:clamp(16px,4vw,19px);
+  }
+  .btn svg{width:22px; height:22px; flex:none; fill:#fff}
+  .btn:active{transform:translateY(3px); box-shadow:0 3px 0 rgba(91,70,54,.15)}
+  .btn-ios{background:var(--orange)}
+  .btn-play{background:var(--green)}
+  .note{color:var(--ink-soft); font-size:clamp(14px,3.6vw,16px); text-align:center; margin:8px 0 0}
+
+  .gallery{position:relative; margin:clamp(28px,6vw,44px) 0 10px}
+  .shots{
+    display:grid; grid-auto-flow:column;
+    grid-auto-columns:calc((100% - (var(--per) - 1) * var(--gap)) / var(--per));
+    gap:var(--gap); overflow-x:auto; scroll-snap-type:x proximity;
+    scroll-behavior:smooth; -webkit-overflow-scrolling:touch;
+    padding:6px 20px 4px; scroll-padding-left:20px;
+    scrollbar-width:none;
+  }
+  .shots::-webkit-scrollbar{display:none}
+  .shots figure{margin:0; scroll-snap-align:start; text-align:center}
+  .shots img{
+    width:100%; height:auto; display:block; border-radius:clamp(12px,3vw,22px);
+    border:2px solid var(--ink); box-shadow:var(--shadow); background:var(--card);
+  }
+  .shots figcaption{font-size:clamp(13px,3.2vw,15px); color:var(--ink-soft); margin-top:10px}
+  .nav{
+    position:absolute; top:calc(50% - 20px); transform:translateY(-50%);
+    width:46px; height:46px; border-radius:50%; border:2px solid var(--ink);
+    background:var(--card); color:var(--ink); box-shadow:var(--shadow);
+    font-size:24px; line-height:1; cursor:pointer; display:grid; place-items:center;
+    font-family:inherit; font-weight:700; padding:0 0 4px;
+  }
+  .nav[disabled]{opacity:.3; cursor:default; box-shadow:none}
+  .nav.prev{left:2px} .nav.next{right:2px}
+  @media (max-width:900px){ :root{--per:3} }
+  @media (max-width:640px){ :root{--per:2; --gap:12px} .nav{width:38px; height:38px; font-size:20px} }
+
+  section{padding:clamp(24px,6vw,36px) 0}
+  h2{font-size:clamp(24px,6vw,34px); margin:0 0 18px; text-align:center}
+  .grid{display:grid; gap:16px; grid-template-columns:repeat(auto-fit,minmax(min(100%,250px),1fr))}
+  .card{
+    background:var(--card); border:2px solid var(--ink); border-radius:18px;
+    padding:18px 20px; box-shadow:var(--shadow);
+  }
+  .card h3{margin:0 0 6px; font-size:20px}
+  .card p{margin:0; color:var(--ink-soft)}
+  .card .dot{
+    display:inline-block; width:14px; height:14px; border-radius:50%;
+    border:2px solid var(--ink); margin-right:8px; vertical-align:-1px;
+  }
+  footer{
+    text-align:center; padding:40px 0 56px; color:var(--ink-soft); font-size:15px;
+    border-top:2px solid var(--line); margin-top:30px;
+  }
+  footer a{color:inherit}
+</style>
+</head>
+<body>
+
+<header class="wrap">
+  <h1>Kittehpult</h1>
+  <p class="tagline">…and other tails</p>
+  <p class="lede">
+    Pull back the kittehpult, let go, and send a cat arcing into the sky.
+    Land it on the last one and keep stacking. The stack sways, the visitors
+    attack, and space is a very long way up.
+  </p>
+  <div class="cta">
+    <a class="btn btn-ios" href="https://apps.apple.com/app/kittehpult/id6812830761">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16.37 1.43c0 1.14-.42 2.2-1.26 3.02-.94.93-2.06 1.47-3.05 1.38a3.2 3.2 0 0 1-.02-.36c0-1.1.47-2.2 1.28-2.99.83-.82 2.03-1.42 3.03-1.46.01.14.02.27.02.41zM20.9 17.1c-.5 1.16-.74 1.67-1.38 2.7-.9 1.43-2.16 3.2-3.73 3.22-1.39.01-1.75-.9-3.64-.89-1.89.01-2.28.91-3.67.9-1.57-.01-2.77-1.62-3.66-3.04-2.5-4-2.77-8.7-1.22-11.2 1.1-1.77 2.83-2.8 4.46-2.8 1.66 0 2.7.9 4.08.9 1.33 0 2.14-.9 4.06-.9 1.45 0 2.99.79 4.08 2.16-3.59 1.96-3 7.08.62 8.95z"/></svg>
+      Get it on iPhone
+    </a>
+    <a class="btn btn-play" href="https://play.google.com/store/apps/details?id=dev.kittehpult.app">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 2.2v19.6c0 .82.9 1.32 1.6.9l16-9.8c.67-.41.67-1.39 0-1.8l-16-9.8c-.7-.42-1.6.08-1.6.9z"/></svg>
+      Get it on Android
+    </a>
+  </div>
+  <p class="note">Fling cats, stack cats, get to space!</p>
+</header>
+
+<div class="gallery">
+  <button class="nav prev" type="button" aria-label="Previous screenshots">&lsaquo;</button>
+  <div class="shots" id="shots">
+    <figure><img src="img/ios_01_menu.png" alt="The Kittehpult main menu" loading="lazy" width="1320" height="2868"><figcaption>Playful menus</figcaption></figure>
+    <figure><img src="img/ios_02_modes.png" alt="Choosing between Casual and Stressful modes" loading="lazy" width="1320" height="2868"><figcaption>Casual or stressful modes</figcaption></figure>
+    <figure><img src="img/ios_03_stack.png" alt="A tall stack of cats climbing past the clouds" loading="lazy" width="1320" height="2868"><figcaption>How high can you go?</figcaption></figure>
+    <figure><img src="img/ios_04_cats.png" alt="The cat roster" loading="lazy" width="1320" height="2868"><figcaption>Custom cats</figcaption></figure>
+    <figure><img src="img/ios_05_designer.png" alt="The cat designer" loading="lazy" width="1320" height="2868"><figcaption>Design your own Kitteh</figcaption></figure>
+    <figure><img src="img/ios_06_space.png" alt="The stack reaching space" loading="lazy" width="1320" height="2868"><figcaption>Above the clouds, then towards the Kittehmoon</figcaption></figure>
+    <figure><img src="img/ios_08_asteroid.png" alt="An asteroid threatening the stack" loading="lazy" width="1320" height="2868"><figcaption>Not everything up there is friendly</figcaption></figure>
+    <figure><img src="img/ios_07_card.png" alt="The end-of-round scorecard" loading="lazy" width="1320" height="2868"><figcaption>Get Kitteh home</figcaption></figure>
+  </div>
+  <button class="nav next" type="button" aria-label="More screenshots">&rsaquo;</button>
+</div>
+
+<main class="wrap">
+  <section>
+    <h2>How it goes</h2>
+    <div class="grid">
+      <div class="card">
+        <h3><span class="dot" style="background:var(--orange)"></span>Pull, aim, release</h3>
+        <p>Drag down to charge the kittehpult. The cat goes where you point it — mostly.</p>
+      </div>
+      <div class="card">
+        <h3><span class="dot" style="background:var(--green)"></span>Stack to the finish</h3>
+        <p>Cat beds steady the tower. Everything else makes it sway.</p>
+      </div>
+      <div class="card">
+        <h3><span class="dot" style="background:var(--pink)"></span>Donk the visitors</h3>
+        <p>Pesky birds, aliens and asteroids come for your stack. Knock them away before they hit.</p>
+      </div>
+      <div class="card">
+        <h3><span class="dot" style="background:var(--blue)"></span>Autokitteh</h3>
+        <p>Hit the bubble, press the button, and a geyser of cats raises the whole column.</p>
+      </div>
+      <div class="card">
+        <h3><span class="dot" style="background:var(--orange)"></span>Two ways to play</h3>
+        <p>Casual is infinite lives and no stakes. Stressful is nine lives, tilt to steady, and the visitors bite.</p>
+      </div>
+      <div class="card">
+        <h3><span class="dot" style="background:var(--pink)"></span>Cat designer</h3>
+        <p>Paint a cat, name it, and fling it. Your cats are saved on your phone and back up to a file you keep.</p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="wrap">
+  <p><a href="privacy.html">Privacy</a> &middot; <a href="support.html">Support</a></p>
+</footer>
+
+<script>
+  (function () {
+    var strip = document.getElementById('shots');
+    var prev = document.querySelector('.nav.prev');
+    var next = document.querySelector('.nav.next');
+    function page() {
+      var fig = strip.querySelector('figure');
+      var gap = parseFloat(getComputedStyle(strip).columnGap) || 16;
+      var step = fig.getBoundingClientRect().width + gap;
+      var visible = Math.max(1, Math.round((strip.clientWidth - 40 + gap) / step));
+      return step * visible;
+    }
+    function update() {
+      var max = strip.scrollWidth - strip.clientWidth - 2;
+      prev.disabled = strip.scrollLeft <= 2;
+      next.disabled = strip.scrollLeft >= max;
+    }
+    prev.addEventListener('click', function () { strip.scrollBy({ left: -page(), behavior: 'smooth' }); });
+    next.addEventListener('click', function () { strip.scrollBy({ left: page(), behavior: 'smooth' }); });
+    strip.addEventListener('scroll', update, { passive: true });
+    window.addEventListener('resize', update);
+    update();
+  })();
+</script>
+
+</body>
+</html>
