@@ -71,6 +71,34 @@
     border:2px solid var(--ink); box-shadow:var(--shadow); background:var(--card);
   }
   .shots figcaption{font-size:clamp(13px,3.2vw,15px); color:var(--ink-soft); margin-top:10px}
+
+  /* The clip: a still with a play badge until it is asked for, so the
+     page never loads YouTube for someone who only wanted screenshots.
+     Boxed to the screenshots' shape so the row stays level. */
+  .play-card{
+    display:block; width:100%; aspect-ratio:1320/2868; padding:0; cursor:pointer;
+    border:2px solid var(--ink); border-radius:clamp(12px,3vw,22px);
+    box-shadow:var(--shadow); background:#1b1512; overflow:hidden; position:relative;
+  }
+  .play-card img{
+    width:100%; height:100%; object-fit:cover; display:block;
+    border:0; border-radius:0; box-shadow:none;
+  }
+  .play-mark{
+    position:absolute; inset:0; margin:auto; width:64px; height:64px;
+    border-radius:50%; border:2px solid var(--ink); background:var(--orange);
+    box-shadow:0 4px 0 rgba(0,0,0,.25);
+  }
+  /* The triangle, drawn rather than fetched. */
+  .play-mark::after{
+    content:""; position:absolute; inset:0; margin:auto; width:0; height:0;
+    border-style:solid; border-width:15px 0 15px 25px;
+    border-color:transparent transparent transparent #fff;
+    transform:translateX(3px);
+  }
+  .play-card:hover .play-mark{transform:scale(1.07)}
+  .play-card iframe{width:100%; height:100%; border:0; display:block}
+  @media (max-width:640px){ .play-mark{width:52px; height:52px} }
   .nav{
     position:absolute; top:calc(50% - 20px); transform:translateY(-50%);
     width:46px; height:46px; border-radius:50%; border:2px solid var(--ink);
@@ -129,6 +157,15 @@
 <div class="gallery">
   <button class="nav prev" type="button" aria-label="Previous screenshots">&lsaquo;</button>
   <div class="shots" id="shots">
+    <figure>
+      <button class="play-card" type="button" data-video="Lp5tu8l9Gfs"
+              aria-label="Play the Kittehpult gameplay clip">
+        <img src="img/ios_03_stack.png"
+             alt="A round of Kittehpult" loading="lazy" width="1320" height="2868">
+        <span class="play-mark" aria-hidden="true"></span>
+      </button>
+      <figcaption>Watch a round</figcaption>
+    </figure>
     <figure><img src="img/ios_01_menu.png" alt="The Kittehpult main menu" loading="lazy" width="1320" height="2868"><figcaption>Playful menus</figcaption></figure>
     <figure><img src="img/ios_02_modes.png" alt="Choosing between Casual and Stressful modes" loading="lazy" width="1320" height="2868"><figcaption>Casual or stressful modes</figcaption></figure>
     <figure><img src="img/ios_03_stack.png" alt="A tall stack of cats climbing past the clouds" loading="lazy" width="1320" height="2868"><figcaption>How high can you go?</figcaption></figure>
@@ -196,6 +233,20 @@
     }
     prev.addEventListener('click', function () { strip.scrollBy({ left: -page(), behavior: 'smooth' }); });
     next.addEventListener('click', function () { strip.scrollBy({ left: page(), behavior: 'smooth' }); });
+    // The clip loads only when someone asks for it.
+    var card = document.querySelector('.play-card');
+    if (card) {
+      card.addEventListener('click', function () {
+        var frame = document.createElement('iframe');
+        frame.src = 'https://www.youtube-nocookie.com/embed/' +
+          card.dataset.video + '?autoplay=1&rel=0&playsinline=1';
+        frame.title = 'Kittehpult gameplay';
+        frame.allow = 'accelerometer; autoplay; encrypted-media; picture-in-picture';
+        frame.allowFullscreen = true;
+        card.replaceChildren(frame);
+      }, { once: true });
+    }
+
     strip.addEventListener('scroll', update, { passive: true });
     window.addEventListener('resize', update);
     update();
